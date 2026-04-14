@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro AI JPG Compressor</title>
+    <title>Pro AI JPG Compressor - Individual Control</title>
     <!-- SortableJS for drag and drop -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <!-- JSZip for batch downloading -->
@@ -18,7 +18,6 @@
             --primary: #000000;
             --primary-hover: #333333;
             --accent: #3b82f6;
-            --ai-gradient: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
             --success: #10b981;
             --danger: #ef4444;
             --bg-page: #f4f4f5;
@@ -53,31 +52,19 @@
         .dropzone p { color: var(--text-muted); font-size: 0.9rem; }
         input[type="file"] { display: none; }
 
-        /* Pro Toolbar */
+        /* Toolbar */
         .toolbar {
-            background: var(--bg-card); padding: 1rem 1.5rem; border-radius: 16px; display: flex; justify-content: space-between;
+            background: var(--bg-card); padding: 1rem 1.5rem; border-radius: 16px; display: flex; justify-content: flex-end;
             align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.02); margin-bottom: 1.5rem; border: 1px solid var(--border);
             flex-wrap: wrap; gap: 1rem; display: none;
         }
-
-        .tools-left { display: flex; align-items: center; gap: 20px; }
-        .tools-right { display: flex; align-items: center; gap: 10px; }
-
-        .quality-control { display: flex; align-items: center; gap: 10px; font-weight: 500; font-size: 0.95rem; }
-        input[type=range] { accent-color: var(--primary); width: 100px; cursor: pointer; }
 
         .btn {
             padding: 0.6rem 1.2rem; border-radius: 10px; border: none; font-weight: 600; cursor: pointer;
             display: flex; align-items: center; gap: 8px; transition: all 0.2s ease; font-size: 0.9rem;
         }
-        .btn-ai { background: var(--ai-gradient); color: white; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3); }
-        .btn-ai:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(168, 85, 247, 0.4); }
-        
         .btn-dark { background: var(--primary); color: white; }
-        .btn-dark:hover { background: var(--primary-hover); transform: translateY(-2px); }
-
         .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
-        .btn-outline:hover { background: var(--bg-page); border-color: #d4d4d8; }
 
         /* List Layout */
         .image-list { display: flex; flex-direction: column; gap: 1rem; }
@@ -85,80 +72,57 @@
         .list-item {
             display: flex; align-items: center; background: var(--bg-card); border: 1px solid var(--border);
             border-radius: 16px; padding: 12px; gap: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden;
-        }
-
-        .list-item:hover {
-            transform: scale(1.01) translateY(-2px); box-shadow: 0 12px 25px rgba(0,0,0,0.06); border-color: #d4d4d8;
+            transition: all 0.3s ease; position: relative; overflow: hidden;
         }
 
         /* Drag Handle */
-        .drag-handle {
-            color: #d4d4d8; font-size: 1.2rem; cursor: grab; padding: 0 10px; display: flex; align-items: center; justify-content: center; transition: 0.2s;
-        }
-        .list-item:hover .drag-handle { color: var(--text-muted); }
-        .drag-handle:active { cursor: grabbing; }
+        .drag-handle { color: #d4d4d8; font-size: 1.2rem; cursor: grab; padding: 0 10px; }
 
         /* Image Box */
         .item-img-box {
-            width: 100px; height: 100px; background: #f8fafc; border-radius: 10px; border: 1px solid #f1f5f9;
+            width: 80px; height: 80px; background: #f8fafc; border-radius: 10px; border: 1px solid #f1f5f9;
             display: flex; align-items: center; justify-content: center; padding: 5px; position: relative; flex-shrink: 0;
         }
         .item-img-box img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 6px; }
-        .format-tag {
-            position: absolute; bottom: 5px; left: 5px; background: rgba(0,0,0,0.7); color: white; font-size: 0.6rem;
-            padding: 2px 6px; border-radius: 4px; font-weight: bold; letter-spacing: 0.5px;
-        }
 
         /* Details Box */
         .item-details { flex-grow: 1; min-width: 0; }
-        .item-name { font-weight: 600; font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 6px; }
+        .item-name { font-weight: 600; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; }
         
-        .item-sizes { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; }
-        .size-old { text-decoration: line-through; }
-        .size-new { color: var(--success); font-weight: 700; font-size: 0.95rem; }
-        .saved-badge { background: #dcfce7; color: var(--success); padding: 2px 8px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; }
+        .item-sizes { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px; }
+        .size-new { color: var(--success); font-weight: 700; }
 
-        /* Savings Progress Bar */
-        .progress-bg { width: 100%; max-width: 250px; height: 6px; background: #f1f5f9; border-radius: 10px; overflow: hidden; }
-        .progress-fill { height: 100%; background: var(--success); border-radius: 10px; transition: width 0.5s ease; }
-
-        /* Action Buttons - ALWAYS VISIBLE NOW */
-        .item-actions {
-            display: flex; gap: 8px; padding-right: 10px; transition: all 0.3s ease;
+        /* Individual Quality Control */
+        .item-quality-control {
+            display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
         }
+        .item-quality-control label { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); min-width: 65px; }
+        .item-quality-control input[type=range] { width: 120px; accent-color: var(--accent); cursor: pointer; height: 4px; }
+        .q-val { font-size: 0.8rem; font-weight: 700; color: var(--accent); min-width: 35px; }
 
+        /* Actions */
+        .item-actions { display: flex; gap: 5px; }
         .action-btn {
-            width: 38px; height: 38px; border-radius: 10px; border: none; display: flex; align-items: center; justify-content: center;
-            font-size: 1rem; cursor: pointer; transition: 0.2s; background: var(--bg-page); color: var(--text-main);
+            width: 34px; height: 34px; border-radius: 8px; border: none; display: flex; align-items: center; justify-content: center;
+            font-size: 0.9rem; cursor: pointer; transition: 0.2s; background: var(--bg-page); color: var(--text-main);
         }
-        .action-btn:hover { transform: translateY(-2px); color: white; }
-        .btn-view:hover { background: var(--accent); }
-        .btn-rep:hover { background: #eab308; }
-        .btn-down:hover { background: var(--success); }
-        .btn-del:hover { background: var(--danger); }
-
-        /* Responsive */
-        @media (max-width: 650px) {
-            .item-actions { flex-wrap: wrap; justify-content: flex-end; }
-            .list-item { flex-direction: column; align-items: flex-start; }
-            .drag-handle { position: absolute; top: 10px; right: 10px; }
-            .item-actions { position: absolute; bottom: 10px; right: 10px; }
-        }
+        .btn-view:hover { background: var(--accent); color: white; }
+        .btn-down:hover { background: var(--success); color: white; }
+        .btn-del:hover { background: var(--danger); color: white; }
 
         /* Loading */
-        .loading-state { text-align: center; padding: 2rem; color: var(--primary); font-weight: 600; display: none; }
-        .loading-state i { font-size: 2rem; margin-bottom: 10px; }
+        .loading-state { text-align: center; padding: 2rem; color: var(--primary); display: none; }
 
-        /* Lightbox Modal */
-        .modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); }
-        .modal-content {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: 90vw; max-height: 90vh;
-            background: white; padding: 10px; border-radius: 12px; display: flex; justify-content: center; align-items: center;
+        /* Modal */
+        .modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); }
+        .modal-content { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 10px; border-radius: 12px; }
+        .modal-content img { max-width: 90vw; max-height: 85vh; object-fit: contain; }
+        .close-modal { position: absolute; top: 20px; right: 30px; color: white; font-size: 2.5rem; cursor: pointer; }
+
+        @media (max-width: 700px) {
+            .list-item { flex-direction: column; align-items: flex-start; }
+            .item-actions { margin-top: 10px; width: 100%; justify-content: flex-end; }
         }
-        .modal-content img { max-width: 100%; max-height: 85vh; object-fit: contain; border-radius: 8px; }
-        .close-modal { position: absolute; top: 20px; right: 30px; color: white; font-size: 2.5rem; cursor: pointer; transition: 0.2s; }
-        .close-modal:hover { color: var(--danger); transform: scale(1.1); }
     </style>
 </head>
 <body>
@@ -166,50 +130,33 @@
     <div class="container">
         <div class="header">
             <h1>Pro JPG Compressor</h1>
-            <p>Smart AI Optimization • Any Format to Pure JPG • Drag & Drop List</p>
+            <p>Set individual quality for each image • Instant Optimization</p>
         </div>
 
         <div class="dropzone" id="drop-zone" onclick="document.getElementById('file-input').click()">
             <i class="fa-solid fa-cloud-arrow-up"></i>
-            <h3>Upload Images Here</h3>
-            <p>Supports PNG, WEBP, JPEG. Drops them to perfectly compressed pure JPGs.</p>
+            <h3>Upload Images</h3>
+            <p>Click or drag images here to start</p>
         </div>
         
         <input type="file" id="file-input" multiple accept="image/*">
         <input type="file" id="replace-input" accept="image/*">
 
         <div class="toolbar" id="toolbar">
-            <div class="tools-left">
-                <button class="btn btn-ai" onclick="aiSmartCompress()">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i> AI Smart Optimize
-                </button>
-                <div class="quality-control">
-                    <label>JPG Quality: <span id="quality-val">70%</span></label>
-                    <input type="range" id="quality" min="0.1" max="1" step="0.1" value="0.7" onchange="compressAllImages(this.value)">
-                </div>
-            </div>
-            <div class="tools-right">
-                <button class="btn btn-outline" onclick="clearAll()"><i class="fa-solid fa-trash"></i> Clear</button>
-                <button class="btn btn-dark" onclick="downloadAll()"><i class="fa-solid fa-download"></i> Save All (ZIP)</button>
-            </div>
+            <button class="btn btn-outline" onclick="clearAll()"><i class="fa-solid fa-trash"></i> Clear</button>
+            <button class="btn btn-dark" onclick="downloadAll()"><i class="fa-solid fa-download"></i> Save All (ZIP)</button>
         </div>
 
         <div class="loading-state" id="loading">
-            <i class="fa-solid fa-circle-notch fa-spin"></i>
-            <p>Processing Magic...</p>
+            <i class="fa-solid fa-circle-notch fa-spin"></i><p>Processing...</p>
         </div>
 
-        <div class="image-list" id="image-list">
-            <!-- List Items Render Here -->
-        </div>
+        <div class="image-list" id="image-list"></div>
     </div>
 
-    <!-- Lightbox Modal -->
     <div id="preview-modal" class="modal">
         <span class="close-modal" onclick="closePreview()">&times;</span>
-        <div class="modal-content">
-            <img id="preview-img" src="">
-        </div>
+        <div class="modal-content"><img id="preview-img" src=""></div>
     </div>
 
     <script>
@@ -222,19 +169,10 @@
         const imageList = document.getElementById('image-list');
         const toolbar = document.getElementById('toolbar');
         const loading = document.getElementById('loading');
-        const qualitySlider = document.getElementById('quality');
-        const qualityVal = document.getElementById('quality-val');
 
-        // Update slider value text
-        qualitySlider.addEventListener('input', (e) => {
-            qualityVal.innerText = Math.round(e.target.value * 100) + '%';
-        });
-
-        // Initialize SortableJS for Drag & Drop Reordering on the List
         new Sortable(imageList, {
-            handle: '.drag-handle', // Only drag when clicking the grip icon
-            animation: 250,
-            ghostClass: 'sortable-ghost',
+            handle: '.drag-handle',
+            animation: 200,
             onEnd: function () {
                 const newOrder = [];
                 document.querySelectorAll('.list-item').forEach(item => {
@@ -246,7 +184,6 @@
             }
         });
 
-        // Upload Event Listeners
         fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
         replaceInput.addEventListener('change', (e) => handleReplace(e.target.files[0]));
 
@@ -254,29 +191,28 @@
         dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
         dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); handleFiles(e.dataTransfer.files); });
 
-        // Process Uploaded Files
         async function handleFiles(files) {
             if (files.length === 0) return;
             showLoading(true);
-            
             for (let file of files) {
                 if (!file.type.startsWith('image/')) continue;
-                
                 const originalUrl = await readFile(file);
                 const id = 'img_' + Math.random().toString(36).substr(2, 9);
                 
-                imagesData.push({
+                let imgObj = {
                     id: id,
                     name: file.name,
                     originalSize: file.size,
                     originalUrl: originalUrl,
+                    quality: 0.7, // Default individual quality
                     compressedBlob: null,
                     compressedUrl: null,
                     compressedSize: 0
-                });
+                };
+                await compressImage(imgObj);
+                imagesData.push(imgObj);
             }
-            
-            await compressAllImages(qualitySlider.value);
+            renderList();
             showLoading(false);
         }
 
@@ -288,8 +224,7 @@
             });
         }
 
-        // Compress logic: Force to perfect JPG with white background
-        function compressImage(imgObj, quality, applyAI = false) {
+        function compressImage(imgObj) {
             return new Promise((resolve) => {
                 const img = new Image();
                 img.onload = () => {
@@ -297,126 +232,85 @@
                     const ctx = canvas.getContext('2d');
                     canvas.width = img.width;
                     canvas.height = img.height;
-
-                    // Fill white background to save transparent PNGs properly in JPG
                     ctx.fillStyle = '#FFFFFF';
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                    // Apply AI Color Enhancement if requested
-                    if (applyAI) {
-                        ctx.filter = 'contrast(1.05) saturate(1.1)';
-                    }
-                    
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    
-                    // Export strictly as JPEG
                     canvas.toBlob((blob) => {
+                        if(imgObj.compressedUrl) URL.revokeObjectURL(imgObj.compressedUrl);
                         imgObj.compressedBlob = blob;
                         imgObj.compressedSize = blob.size;
                         imgObj.compressedUrl = URL.createObjectURL(blob);
                         resolve();
-                    }, 'image/jpeg', parseFloat(quality));
+                    }, 'image/jpeg', parseFloat(imgObj.quality));
                 };
                 img.src = imgObj.originalUrl;
             });
         }
 
-        async function compressAllImages(quality, applyAI = false) {
-            showLoading(true);
-            for (let imgObj of imagesData) {
-                let finalQuality = quality;
-                if(applyAI) {
-                    // Smart size-based quality assignment
-                    if(imgObj.originalSize > 3000000) finalQuality = 0.5;
-                    else if(imgObj.originalSize > 1000000) finalQuality = 0.65;
-                    else finalQuality = 0.8;
-                    
-                    qualitySlider.value = finalQuality;
-                    qualityVal.innerText = 'AI Set';
-                }
-                await compressImage(imgObj, finalQuality, applyAI);
+        async function updateSingleQuality(id, newQuality) {
+            const imgObj = imagesData.find(i => i.id === id);
+            if(imgObj) {
+                imgObj.quality = newQuality;
+                await compressImage(imgObj);
+                renderList(); // Refresh UI with new sizes
             }
-            renderList();
-            showLoading(false);
         }
 
-        function aiSmartCompress() { compressAllImages(0.7, true); }
-
-        // Render the new List Layout
         function renderList() {
             imageList.innerHTML = '';
             toolbar.style.display = imagesData.length > 0 ? 'flex' : 'none';
 
             imagesData.forEach((img) => {
                 let savingPercent = Math.round((1 - (img.compressedSize / img.originalSize)) * 100);
-                if (savingPercent < 0) savingPercent = 0; // Prevent negative visual if file grows slightly
-                const isSaved = savingPercent > 0;
+                if (savingPercent < 0) savingPercent = 0;
 
                 const item = document.createElement('div');
                 item.className = 'list-item';
                 item.setAttribute('data-id', img.id);
 
                 item.innerHTML = `
-                    <div class="drag-handle" title="Drag to reorder"><i class="fa-solid fa-grip-vertical"></i></div>
+                    <div class="drag-handle"><i class="fa-solid fa-grip-vertical"></i></div>
                     
-                    <div class="item-img-box" onclick="openPreview('${img.id}')" style="cursor:pointer;" title="Click to preview">
-                        <span class="format-tag">JPG</span>
+                    <div class="item-img-box" onclick="openPreview('${img.id}')" style="cursor:pointer;">
                         <img src="${img.compressedUrl}" alt="Thumbnail">
                     </div>
 
                     <div class="item-details">
                         <div class="item-name">${img.name.replace(/\.[^/.]+$/, "")}.jpg</div>
-                        <div class="item-sizes">
-                            <span class="size-old">${formatBytes(img.originalSize)}</span>
-                            <i class="fa-solid fa-arrow-right" style="font-size:0.7rem; color:#cbd5e1;"></i>
-                            <span class="size-new">${formatBytes(img.compressedSize)}</span>
-                            ${isSaved ? `<span class="saved-badge">-${savingPercent}% Saved</span>` : ''}
+                        
+                        <div class="item-quality-control">
+                            <label>JPG Quality</label>
+                            <input type="range" min="0.1" max="1.0" step="0.05" value="${img.quality}" 
+                                   onchange="updateSingleQuality('${img.id}', this.value)">
+                            <span class="q-val">${Math.round(img.quality * 100)}%</span>
                         </div>
-                        <div class="progress-bg">
-                            <div class="progress-fill" style="width: ${savingPercent}%"></div>
+
+                        <div class="item-sizes">
+                            <span style="text-decoration:line-through">${formatBytes(img.originalSize)}</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                            <span class="size-new">${formatBytes(img.compressedSize)}</span>
+                            <span style="color:var(--success); font-weight:700">(-${savingPercent}%)</span>
                         </div>
                     </div>
 
                     <div class="item-actions">
-                        <button class="action-btn btn-view" title="Preview" onclick="openPreview('${img.id}')"><i class="fa-solid fa-eye"></i></button>
-                        <button class="action-btn btn-rep" title="Replace" onclick="triggerReplace('${img.id}')"><i class="fa-solid fa-rotate"></i></button>
-                        <button class="action-btn btn-down" title="Download" onclick="downloadSingle('${img.id}')"><i class="fa-solid fa-download"></i></button>
-                        <button class="action-btn btn-del" title="Delete" onclick="deleteImage('${img.id}')"><i class="fa-solid fa-trash-can"></i></button>
+                        <button class="action-btn btn-view" onclick="openPreview('${img.id}')"><i class="fa-solid fa-eye"></i></button>
+                        <button class="action-btn btn-down" onclick="downloadSingle('${img.id}')"><i class="fa-solid fa-download"></i></button>
+                        <button class="action-btn btn-del" onclick="deleteImage('${img.id}')"><i class="fa-solid fa-trash-can"></i></button>
                     </div>
                 `;
                 imageList.appendChild(item);
             });
         }
 
-        // Action Handlers
         function deleteImage(id) { imagesData = imagesData.filter(img => img.id !== id); renderList(); }
-        function triggerReplace(id) { replaceId = id; replaceInput.click(); }
-        
-        async function handleReplace(file) {
-            if (!file || !file.type.startsWith('image/')) return;
-            showLoading(true);
-            const originalUrl = await readFile(file);
-            const index = imagesData.findIndex(img => img.id === replaceId);
-            if(index !== -1) {
-                imagesData[index].name = file.name;
-                imagesData[index].originalSize = file.size;
-                imagesData[index].originalUrl = originalUrl;
-                await compressImage(imagesData[index], qualitySlider.value);
-            }
-            replaceInput.value = '';
-            renderList();
-            showLoading(false);
-        }
-
-        function clearAll() {
-            if(confirm("Are you sure you want to clear the list?")) { imagesData = []; renderList(); fileInput.value = ''; }
-        }
+        function clearAll() { if(confirm("Clear list?")) { imagesData = []; renderList(); } }
 
         function downloadSingle(id) {
             const img = imagesData.find(i => i.id === id);
             const link = document.createElement('a');
             link.href = img.compressedUrl;
-            link.download = img.name.replace(/\.[^/.]+$/, "") + "_compressed.jpg";
+            link.download = img.name.replace(/\.[^/.]+$/, "") + "_opt.jpg";
             link.click();
         }
 
@@ -424,42 +318,28 @@
             if (imagesData.length === 0) return;
             showLoading(true);
             const zip = new JSZip();
-            const folder = zip.folder("Pro_Compressed_JPGs");
-
-            imagesData.forEach((img, index) => {
-                const newName = img.name.replace(/\.[^/.]+$/, "") + `_optimized_${index+1}.jpg`;
-                folder.file(newName, img.compressedBlob);
-            });
-
-            zip.generateAsync({ type: "blob" }).then(function(content) {
+            imagesData.forEach((img, i) => zip.file(`${img.name.replace(/\.[^/.]+$/, "")}_${i+1}.jpg`, img.compressedBlob));
+            zip.generateAsync({ type: "blob" }).then(content => {
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(content);
-                link.download = "JPG_Batch_Optimized.zip";
+                link.download = "Batch_JPG.zip";
                 link.click();
                 showLoading(false);
             });
         }
 
-        // Modal Preview Handlers
         function openPreview(id) {
             const img = imagesData.find(i => i.id === id);
             document.getElementById('preview-img').src = img.compressedUrl;
             document.getElementById('preview-modal').style.display = 'block';
         }
         function closePreview() { document.getElementById('preview-modal').style.display = 'none'; }
-        window.onclick = function(event) {
-            const modal = document.getElementById('preview-modal');
-            if (event.target == modal) closePreview();
-        }
 
-        // Format File Size
         function formatBytes(bytes) {
             if (bytes === 0) return '0 B';
-            const k = 1024; const sizes = ['B', 'KB', 'MB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            const k = 1024, sizes = ['B', 'KB', 'MB'], i = Math.floor(Math.log(bytes) / Math.log(k));
             return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
         }
-
         function showLoading(show) { loading.style.display = show ? 'block' : 'none'; }
     </script>
 </body>
